@@ -3,6 +3,8 @@ from typing import Callable
 import streamlit.components.v1 as components
 import streamlit as st
 
+from streamlit_extras.keyboard_text import load_key_css, key
+
 
 # TODO add keyboard hint to button (streamlit-extras)
 # https://arnaudmiribel.github.io/streamlit-extras/extras/keyboard_text/
@@ -57,6 +59,16 @@ def add_keyboard_shortcuts(key_combinations: dict[str, str]):
     components.html(js_code, height=0, width=0)
 
 
-def button(label: str, shortcut: dict[str, str], on_click: Callable[..., None]):
-    st.button(label=label, on_click=on_click)
-    add_keyboard_shortcuts(shortcut)
+def button(label: str, shortcut: dict[str, str], on_click: Callable[..., None], hint=False):
+    if hint is True:
+        load_key_css()
+        column1, column2 = st.columns([1, 2])
+        with column1:
+            st.button(label=label, on_click=on_click)
+        with column2:
+            key(next(iter(shortcut.keys())))
+        add_keyboard_shortcuts(shortcut)
+    else:
+        st.button(label=label, on_click=on_click)
+        add_keyboard_shortcuts(shortcut)
+
